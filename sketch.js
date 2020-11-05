@@ -1,74 +1,62 @@
 
-var dog, happyDog, database, food, foodStock;
+var database;
+var gameState = 0;
+var playerCount;
+var form,game,player;
+var allPlayer;
+var car1,car2,car3,car4;
+
+var car1img , car2img , car3img , car4img;
+var track , ground;
 
 
-function preload()
-{
+var cars;
 
-  dog = loadImage("images/dogImg.png");
+function preload(){
 
-  happyDog = loadImage("images/dogImg1.png");
+    car1img = loadImage("images/car1.png");
+    car2img = loadImage("images/car2.png");
+    car3img = loadImage("images/car3.png");
+    car4img = loadImage("images/car4.png");
+    ground = loadImage("images/ground.png");
+    track = loadImage("images/track.jpg");
 
-}
-
-function setup() {
-  createCanvas(500, 500);
   
-  database = firebase.database;
+  }
 
-  foodStock = database.ref('Food');
-  
-  foodStock.on("value" , readStock())
+function setup(){
+    createCanvas(windowWidth-70,windowHeight-70);
+    
+   database = firebase.database();
+
+    game = new Game();
+    
+    game.getState();
+
+    game.start();
+
 
 }
 
+function draw(){
+    
 
-function draw() {  
+if(playerCount == 4 && gameState === 0){
 
-  background(46, 139, 87);
+    game.updateState(1);
+}
+    
+if( gameState == 1){
 
-  if(keyWentDown(UP_ARROW)){
+    background(ground);
+    image(track,0,-4*windowHeight,windowWidth,5*windowHeight);
+    game.play();
+    drawSprites();
+}
+if( gameState === 2){
 
-    writeStock(food);
-
-    dog.addImage(happyDog);
-  }
-
-  drawSprites();
-
-  fill("white");
-
-  textSize(16);
-
-  stroke("red");
-
-  text(" NOTE : Press UP_ARROW TO FEED THE DOG " , 100,100);
+    game.end();
 
 }
 
-  function readStock(data){
-
-    food = data.val();
-
-  }
-
-  function writeStock(x){
-
-    if(x<=0){
-
-      x = 0;
-
-    }
-  else{
-    x = x-1;
-    }
-
-    database.ref('/').update({
-
-     Food : x
-      
-    })
-
-  }
-
-
+}
